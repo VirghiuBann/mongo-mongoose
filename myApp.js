@@ -125,7 +125,7 @@ const removeManyPeople = (done) => {
   const nameToRemove = "Mary";
   const filter = {name: nameToRemove};
 
-  Person.findOneAndRemove(filter)
+  Person.deleteMany(filter)
   .then((removedPerson) => {
     done(null, removedPerson)
   })
