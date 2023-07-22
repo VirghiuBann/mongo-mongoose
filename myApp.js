@@ -12,26 +12,26 @@ const createAndSavePerson = (done) => {
     favoriteFoods: ["Pizza","Hamburger", "Fries"]
   });
 
-  person.save(function(err, data) {
-    if(err) {
-      console.log(err);
-      done(err);
-    } else {
-      done(null, data);
-    }
-  });
-
+  person.save()
+  .then((data) => {
+    done(null, data);
+  })
+  .catch((err)=> {
+    console.log(err);
+    done(err);
+  }); 
+ 
 };
 
 const createManyPeople = (arrayOfPeople, done) => {  
-  Person.create(arrayOfPeople, function(err, data) {
-    if(err) {
-      console.log(err);
-      done(err)
-    } else {
-      done(null , data);
-    }
+  Person.create(arrayOfPeople)
+  .then((data) => {
+    done(null , data);
   })
+  .catch((err) => {
+    console.log(err);
+    done(err)
+  });
 };
 
 
@@ -49,49 +49,46 @@ const findPeopleByName = (personName, done) => {
 };
 
 const findOneByFood = (food, done) => {
-  const query = {favoriteFoods: {$in: food}};
-  Person.findOne(query, (err, data) => {
-    if(err){
-      console.log(err);
-      done(err);
-    } else {
-      done(null, data);
-    }
+  const query = { favoriteFoods: { $in: food } };
+  
+  Person.findOne(query)
+  .then((data) => {
+    done(null, data);
   })
-};
+  .catch((err) => {
+    console.log(err);
+    done(err);
+    });
+  };
 
 const findPersonById = (personId, done) => {
   const query = {_id: personId};
 
-  Person.findById(query, (err, data) => {
-    if(err) {
+  Person.findById(query)
+    .then((data) => {
+      done(null , data);
+    })
+    .catch((err) => {
       console.log(err);
       done(err);
-    }else {
-      done(null , data);
-    }
-  })
+    });  
 };
 
 const findEditThenSave = (personId, done) => {
   const foodToAdd = "hamburger";
 
-  findPersonById(personId, (err, personData) => {
-    if(err) {
-      console.log(err);
-      done(err);
-    } else {
+  findPersonById(personId)
+    .then((personData) => {
       personData.favoriteFoods.push(foodToAdd);
-      personData.save((err, personUpdated) => {
-        if(err){
-          console.log(err);
+      return personData.save();
+    })
+    .then((personUpdated) => {
+      done(null, personUpdated);
+    })
+    .catch((err) => {
+       console.log(err);
           done(err);
-        } else {
-          done(null, personUpdated);
-        }
-      });      
-    }
-  });
+    });
 };
 
 const findAndUpdate = (personName, done) => {
